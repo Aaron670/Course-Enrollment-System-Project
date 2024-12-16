@@ -1,108 +1,65 @@
 package enrollmentSystem;
-
-import java.awt.BorderLayout;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Iterator;
-
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 
 public class GuiPrototype {
-	JFrame frame = new JFrame();
-	JPanel[] panels;
-	
-	SQLConnector sql = new SQLConnector();
-	
-	public String[][] resultDataToArray() throws SQLException {
-		String[][] data = new String[100][100];
-		
-		String run = "SELECT Students.Student_ID, Students.ContactNumber, Students.Fname, Students.Lname, Students.EnrollmentDate, Courses.CourseName FROM Students JOIN Courses ON Students.CourseEnrolled = Courses.Course_ID";
-		ResultSet rs= this.sql.queryData(run);
-		int x=0;
-		while(rs.next()) {
-			
-			data[x][0]=rs.getString("Student_ID");
-			data[x][1]=rs.getString("Fname");
-			data[x][2]=rs.getString("Lname");
-			data[x][3]=rs.getString("ContactNumber");
-			data[x][4]=rs.getString("EnrollmentDate");
-			data[x][5]=rs.getString("CourseName");
-			x++;
-		}
-		
-		return data;
 
-	}
-	
-	private void switchPanel(JPanel panel) {
-		System.out.println("HI"+panel);
-		frame.getContentPane().removeAll();
-		frame.getContentPane().add(panel);
-		frame.repaint();
-		frame.revalidate();
-	}
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            // Create frame
+            JFrame frame = new JFrame("Editable JTable Example with Array");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(500, 400);
 
-	public  void createGUI() throws SQLException {
-		
-        String[][] data = this.resultDataToArray();
-        String[] columnNames = { "ID", "First Name", "Last Name","Contact Number","Date","Course "};
-        
-        // Frame Stuff
-	        
-	        frame.setSize(600, 400);
-	        frame.setTitle("Prorotype Table GUi");
-	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
-        
-        // Create Panels and Buttons
-	        JPanel panel1 = new JPanel();
-	        String[] buttons = {"View Enrolled Students", "View Available Courses","Enroll Students"};
-	        JPanel[] panels= new JPanel[100];
-	        JButton returnButton = new JButton("Return");
-	        returnButton.addActionListener(e -> switchPanel(panel1));
-	        
-	        for(int i =0; i<buttons.length; i++) {
-	        	panels[i] = new JPanel();
-	        }
-	        
-	        
-	        for(int i =0; i<buttons.length; i++) {
-	        	int x = i;
-	        	JButton	button= new JButton(buttons[i]);
-	        	
-	        	button.addActionListener(e -> switchPanel(panels[x]));
-	        	panel1.add(button, BorderLayout.NORTH);
-	        }
-	        
-	        
-	
-	        
-	        //Enrolled Student Panel
-		        JTable table = new JTable(data, columnNames);
-		        JScrollPane scrollPane = new JScrollPane(table);
-		        JLabel label = new JLabel("Enrolled Students");
-		 
-		        
-		        panels[0].setLayout(new BorderLayout());
-		        panels[0].add(label, BorderLayout.NORTH);
-		        panels[0].add(returnButton, BorderLayout.WEST);
-		        panels[0].add(scrollPane, BorderLayout.CENTER);
-		        
-		   //View Courses
-	        
-	        
-	        
-		frame.add(panel1);    
-        frame.setVisible(true);
-		
-	}
-	public static void main(String[] args) {
-		GuiPrototype pr= new GuiPrototype();
-		try {
-			pr.createGUI();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+            // Create table model with editable cells
+            DefaultTableModel model = new DefaultTableModel(new Object[][]{
+                {"John", "Doe", "12345"},
+                {"Jane", "Smith", "67890"}
+            }, new Object[]{"First Name", "Last Name", "ID"});
+
+            // Create table with the model
+            JTable table = new JTable(model);
+
+            // Add table to scroll pane
+            JScrollPane scrollPane = new JScrollPane(table);
+
+            // Panel for buttons
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.setLayout(new FlowLayout());
+
+            // Add row button with array data
+            JButton addButton = new JButton("Add Row with Array");
+            addButton.addActionListener(e -> {
+                // Define the new row data as an array
+                Object[] newRow = {"Alice", "Wonderland", "11223"};
+                model.addRow(newRow);
+            });
+            buttonPanel.add(addButton);
+
+            // Update cell button
+            JButton updateButton = new JButton("Update Cell");
+            updateButton.addActionListener(e -> {
+                if (table.getSelectedRow() != -1) {
+                    model.setValueAt("Updated", table.getSelectedRow(), 0); // Update first name of selected row
+                }
+            });
+            buttonPanel.add(updateButton);
+
+            // Remove row button
+            JButton removeButton = new JButton("Remove Row");
+            removeButton.addActionListener(e -> {
+                if (table.getSelectedRow() != -1) {
+                    model.removeRow(table.getSelectedRow());
+                }
+            });
+            buttonPanel.add(removeButton);
+
+            // Add components to frame
+            frame.add(scrollPane, BorderLayout.CENTER);
+            frame.add(buttonPanel, BorderLayout.SOUTH);
+
+            frame.setVisible(true);
+        });
+    }
 }

@@ -109,8 +109,10 @@ public class SQLConnector {
 			
 			this.cur=this.conn.createStatement();
 			this.cur.execute(executeThis);
+			System.out.println("Yays");
 		} catch (SQLException e) {
 			e.printStackTrace();
+			System.out.println("di nagana");
 		}
 		
 	}
