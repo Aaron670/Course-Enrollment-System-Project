@@ -51,7 +51,7 @@ public class CourseEnrollmentConsole {
 	
 	
 	public void initializeCourses() throws Throwable{
-		SqlConn.addCourses();
+		SqlConn.debaddCourses();
 	}
 	
 	public static void clearLine() {
@@ -128,6 +128,8 @@ public class CourseEnrollmentConsole {
 					f=String.format("INSERT INTO Courses(CourseName, CourseDesc) VALUES('%s','%s')",CourseName,CourseDesc);
 					Enroll.addCourses(f);
 					break;
+				case 5:
+					Enroll.initializeCourses();
 				
 				default:
 					System.out.println("Breaking off....");

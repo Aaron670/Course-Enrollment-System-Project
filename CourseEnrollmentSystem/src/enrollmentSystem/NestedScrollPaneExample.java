@@ -2,58 +2,89 @@ package enrollmentSystem;
 
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-
 import java.awt.event.ActionListener;
-import java.lang.reflect.Array;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Arrays;
 import java.awt.event.ActionEvent;
-import enrollmentSystem.getResult;
 
-public class Gui {
-	SQLConnector sql = new SQLConnector();
-	String[] columnNames = { "ID", "First Name", "Last Name","Contact Number","Date","Course "};
-    String[][] enrolledStudent;
-    
-	
-	JFrame frame = new JFrame();
-	JPanel leftPanel = new JPanel();
-	JLabel sub = new JLabel("Course Enrollment System");
-	JButton enrollButton = new JButton("Enrollment");
-	JButton viewCoursesButton = new JButton("View Available Courses");
-	JButton addCourseButton = new JButton("Add a Course");
-	JButton viewStudentsButton = new JButton("View Students Enrolled");
-	JPanel rightPanel = new JPanel();
-	
-	// Panel ng Enrollment
-    JPanel enrollmentPanel = new JPanel();
-    JLabel enrollTitle = new JLabel("Enrollment Form");
-   
-    
-	JLabel fnameLabel = new JLabel("First Name:");
-     
-	JPanel studentsPanel = new JPanel();
-    JPanel coursesPanel = new JPanel();
-    JPanel addCoursePanel = new JPanel();
-    JLabel AddCourses = new JLabel("Add Course");
-    JPanel AdminLogpanel = new JPanel();
-    
-    
-    
+public class NestedScrollPaneExample {
 
-	private void createEnrollmentPanel() throws Exception {
-		
-		// Panel ng Enrollment
+    public static void main(String[] args) {
+        // Main Frame
+        JFrame frame = new JFrame();
+        frame.setTitle("Enrollment Management");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(1250, 800);
+        frame.setLayout(null);
+        frame.setResizable(false);
+        frame.getContentPane().setBackground(Color.decode("#225932"));
+
+        // Left Panel
+        JPanel leftPanel = new JPanel();
+        leftPanel.setBackground(Color.decode("#225932"));
+        leftPanel.setBounds(0, 0, 250, 800);
+        leftPanel.setLayout(null);
+
+        JLabel sub = new JLabel("Course Enrollment System");
+        sub.setBounds(30, 20, 250, 30);
+        sub.setForeground(Color.WHITE);
+        sub.setFont(new Font("Arial", Font.BOLD, 15));
+
+        JButton enrollButton = new JButton("Enrollment");
+        enrollButton.setBounds(30, 175, 200, 40);
+        enrollButton.setFocusable(false);
+        enrollButton.setForeground(Color.WHITE);
+        enrollButton.setBackground(Color.decode("#63a163"));
+
+        JButton viewCoursesButton = new JButton("View Available Courses");
+        viewCoursesButton.setBounds(30, 275, 200, 40);
+        viewCoursesButton.setFocusable(false);
+        viewCoursesButton.setForeground(Color.WHITE);
+        viewCoursesButton.setBackground(Color.decode("#63a163"));
+
+        JButton addCourseButton = new JButton("Add a Course");
+        addCourseButton.setBounds(30, 375, 200, 40);
+        addCourseButton.setFocusable(false);
+        addCourseButton.setForeground(Color.WHITE);
+        addCourseButton.setBackground(Color.decode("#63a163"));
+
+        JButton viewStudentsButton = new JButton("View Students Enrolled");
+        viewStudentsButton.setBounds(30, 475, 200, 40);
+        viewStudentsButton.setFocusable(false);
+        viewStudentsButton.setForeground(Color.WHITE);
+        viewStudentsButton.setBackground(Color.decode("#63a163"));
         
-		enrollTitle.setBounds(100, 50, 250, 30);
+       
+
+        leftPanel.add(sub);
+        leftPanel.add(enrollButton);
+        leftPanel.add(viewCoursesButton);
+        leftPanel.add(addCourseButton);
+        leftPanel.add(viewStudentsButton);
+      
+        // Right Panel pre
+        JPanel rightPanel = new JPanel();
+        rightPanel.setBounds(250, 0, 1000, 800);
+        rightPanel.setBackground(Color.BLACK);
+        rightPanel.setLayout(new CardLayout()); // Set CardLayout for dynamic switching
+
+        //Panel Admin
+        
+       
+        
+        
+        
+        
+        // Panel ng Enrollment
+        JPanel enrollmentPanel = new JPanel();
+        enrollmentPanel.setBackground(Color.decode("#013d21"));
+        enrollmentPanel.setLayout(null);
+
+        JLabel enrollTitle = new JLabel("Enrollment Form");
+        enrollTitle.setBounds(100, 50, 250, 30);
         enrollTitle.setForeground(Color.WHITE);
         enrollTitle.setFont(new Font("Arial", Font.BOLD, 30));
         enrollmentPanel.add(enrollTitle);
         
-    //  SaFirst Name
+        //  SaFirst Name
         JLabel fnameLabel = new JLabel("First Name:");
         fnameLabel.setBounds(250, 210, 130, 30);
         fnameLabel.setForeground(Color.WHITE);
@@ -138,15 +169,21 @@ public class Gui {
         courseLabel.setBounds(200, 480,  200, 30);
         courseLabel.setForeground(Color.WHITE);
         enrollmentPanel.add(courseLabel);
-        
-        String[][] courses = getResult.getCourses();
-        
-        String[] Course = new String[courses.length];
-        
-        for(int i=0; i<courses.length;i++) {
-        	Course[i]=courses[i][1];
-        }
-        
+
+  
+        String[] Course = {
+        	    "Bachelor Of Arts In Journalism",
+        	    "Bachelor Of Early Childhood Education",
+        	    "Bachelor Of Elementary Education",
+        	    "Bachelor Of Science In Business Administration",
+        	    "Bachelor Of Science In Computer Science",
+        	    "Bachelor Of Science In Entrepreneurship",
+        	    "Bachelor Of Science In Hospitality Management",
+        	    "Bachelor Of Science In Information Technology",
+        	    "Bachelor Of Science In Office Administration",
+        	    "Bachelor Of Science In Psychology",
+        	    "Bachelor Of Secondary Education"
+        	};
         JComboBox CourseChoice = new JComboBox(Course);
         
         CourseChoice.setBounds(450, 480,  300, 40);
@@ -189,9 +226,6 @@ public class Gui {
                     "Enrollment Date: " + enrollmentDate + "\n" +
                     "Course Enrolled: " + course, 
                     "Success", JOptionPane.INFORMATION_MESSAGE);
-                	String f= String.format("INSERT INTO Students(Fname,Lname,Email,ContactNumber,EnrollmentDate,CourseEnrolled) VALUES('%s','%s','%s','%s','%s',%s)",fname,lname,email,contact,enrollmentDate,course);
-                	System.out.println(f);
-                	this.sql.insertToTable(f);
                 
                 // Clear the fields after submission
                 fnameField.setText("");
@@ -201,61 +235,22 @@ public class Gui {
                 courseField.setText("");
             }
         });
-	}
-	private void createViewCoursePanel() throws Exception {
-		// Panel for Viewing Courses
-        
+
+        // Panel for Viewing Courses
+        JPanel coursesPanel = new JPanel();
         coursesPanel.setBackground(Color.LIGHT_GRAY);
-        
+        coursesPanel.setLayout(null);
+
         JLabel coursesTitle = new JLabel("Available Courses");
-        coursesTitle.setBorder(new EmptyBorder(50,100,0,750));
+        coursesTitle.setBounds(100, 50, 250, 30);
         coursesTitle.setFont(new Font("Arial", Font.BOLD, 20));
         coursesPanel.add(coursesTitle);
+
+        // Panel for Adding a Course
+        JPanel addCoursePanel = new JPanel();
+        JLabel AddCourses = new JLabel("Add Course");
         
-        JPanel courseCanvas = new JPanel(new BorderLayout());
-        courseCanvas.setPreferredSize(new Dimension(900,650));
-        coursesPanel.add(courseCanvas);
-        
-        JPanel Courses = new JPanel();
-        Courses.setBackground(Color.LIGHT_GRAY);
-        Courses.setLayout(new BoxLayout(Courses, BoxLayout.Y_AXIS));
-        
-        String[][] course = getResult.getCourses();
-        
-        //DITO UNG MGA COURSES
-        
-        int x=0;
-        while(x!=course.length) {
-        	System.out.println(course[0].length);
-        	JPanel courseBox = new JPanel( new BorderLayout());
-        	courseBox.setPreferredSize(new Dimension(200,100));
-            courseBox.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-            
-            JLabel coursetitle = new JLabel(course[x][1]);
-	        coursetitle.setFont(new Font("Arial", Font.BOLD, 20));
-	        
-	        JLabel coursedesc = new JLabel(course[x][2]);
-	        coursedesc.setFont(new Font("Arial", Font.PLAIN, 15));
-            
-            Courses.add(courseBox);
-            Courses.add(Box.createRigidArea(new Dimension(0, 10)));
-        
-	        
-	        
-	        courseBox.add(coursetitle,BorderLayout.WEST);
-	        courseBox.add(coursedesc,BorderLayout.AFTER_LAST_LINE);
-	        Courses.add(courseBox);
-	        x++;
-        }
-        JScrollPane scrollPane = new JScrollPane(Courses);
-		
-        courseCanvas.add(scrollPane,BorderLayout.CENTER);
-        
-        
-	}
-	private void createAddCoursePanel() {
-			 // Panel for Adding a Course
-		addCoursePanel.setBackground(Color.decode("#013d21"));
+        addCoursePanel.setBackground(Color.decode("#013d21"));
         addCoursePanel.setLayout(null);
         
         
@@ -299,11 +294,28 @@ public class Gui {
         CourseSubmit.setForeground(Color.WHITE);
         CourseSubmit.setBackground(Color.decode("#d1aa40"));
         addCoursePanel.add(CourseSubmit);
-		    
-	}
-	private void createAdminLogPanel() throws SQLException {
-		// Panel for Viewing Students
-		
+        
+        
+        
+        
+        
+
+
+        // Panel for Viewing Students
+        JPanel studentsPanel = new JPanel();
+        studentsPanel.setBackground(Color.decode("#013d21"));
+        studentsPanel.setLayout(null);
+
+        JLabel studentsTitle = new JLabel("Students Enrolled");
+        studentsTitle.setBounds(100, 50, 250, 30);
+        studentsTitle.setFont(new Font("Arial", Font.BOLD, 20));
+        studentsPanel.add(studentsTitle);
+        
+        
+        //adminpanel
+      
+        
+        JPanel AdminLogpanel = new JPanel();
         AdminLogpanel.setBackground(Color.decode("#013d21"));
         AdminLogpanel.setLayout(null);
        
@@ -348,24 +360,22 @@ public class Gui {
         LoginButtons.setBackground(Color.decode("#d1aa40"));
         AdminLogpanel.add(LoginButtons);
         
-        LoginButtons.addActionListener(e->{
-        	CardLayout cl = (CardLayout) rightPanel.getLayout();
-            cl.show(rightPanel, "Students");
-        	
-        });
         
-	}
-   private void createViewStudentEnrolledPanel() {
-	   
-  
+        
+   
         
 
-        //DITO UNG VIEW STUDEnts
-	}
-	
-	private void editButtons() {
-		// Add Action Listeners for Buttons
-		enrollButton.addActionListener(e -> {
+        // Add all panels to the rightPanel (CardLayout)
+        rightPanel.add(enrollmentPanel, "Enrollment");
+        rightPanel.add(coursesPanel, "Courses");
+        rightPanel.add(addCoursePanel, "AddCourse"); //eto yung dalwa ahh 1
+        rightPanel.add(studentsPanel, "Students"); //2
+        rightPanel.add(AdminLogpanel,"admin");
+    
+        // Add Action Listeners for Buttons
+        
+
+        enrollButton.addActionListener(e -> {
             CardLayout cl = (CardLayout) rightPanel.getLayout();
             cl.show(rightPanel, "Enrollment");
         });
@@ -384,103 +394,13 @@ public class Gui {
             CardLayout cl = (CardLayout) rightPanel.getLayout();
             cl.show(rightPanel, "admin");
         });
-
-	}
-	
-	public void CreateGUI()	{
-		
-		this.frame.setTitle("Enrollment Management");
-        this.frame.setSize(1250, 800);
-        this.frame.setLayout(null);
-        this.frame.setResizable(false);
-        this.frame.getContentPane().setBackground(Color.decode("#225932"));
-        
-        this.leftPanel.setBackground(Color.decode("#225932"));
-        this.leftPanel.setBounds(0, 0, 250, 800);
-        this.leftPanel.setLayout(null);
-
-        this.sub.setBounds(30, 20, 250, 30);
-        this.sub.setForeground(Color.WHITE);
-        this.sub.setFont(new Font("Arial", Font.BOLD, 15));
-
-        this.enrollButton.setBounds(30, 175, 200, 40);
-        this.enrollButton.setFocusable(false);
-        this.enrollButton.setForeground(Color.WHITE);
-        this.enrollButton.setBackground(Color.decode("#63a163"));
-
-        this.viewCoursesButton.setBounds(30, 275, 200, 40);
-        this.viewCoursesButton.setFocusable(false);
-        this.viewCoursesButton.setForeground(Color.WHITE);
-        this.viewCoursesButton.setBackground(Color.decode("#63a163"));
-
-        this.addCourseButton.setBounds(30, 375, 200, 40);
-        this.addCourseButton.setFocusable(false);
-        this.addCourseButton.setForeground(Color.WHITE);
-        this.addCourseButton.setBackground(Color.decode("#63a163"));
-        this.viewStudentsButton.setBounds(30, 475, 200, 40);
-        this.viewStudentsButton.setFocusable(false);
-        this.viewStudentsButton.setForeground(Color.WHITE);
-        this.viewStudentsButton.setBackground(Color.decode("#63a163"));
         
         
-        this.enrollmentPanel.setBackground(Color.decode("#013d21"));
-        this.enrollmentPanel.setLayout(null);
-        
-        
-
-       
-        
-        
-
-        leftPanel.add(sub);
-        leftPanel.add(enrollButton);
-        leftPanel.add(viewCoursesButton);
-        leftPanel.add(addCourseButton);
-        leftPanel.add(viewStudentsButton);
-
-        // Right Panel pre
-       
-        rightPanel.setBounds(250, 0, 1000, 800);
-        rightPanel.setBackground(Color.BLACK);
-        rightPanel.setLayout(new CardLayout()); // Set CardLayout for dynamic switching
-
-     // Add all panels to the rightPanel (CardLayout)
-        rightPanel.add(enrollmentPanel, "Enrollment");
-        rightPanel.add(coursesPanel, "Courses");
-        rightPanel.add(addCoursePanel, "AddCourse"); //eto yung dalwa ahh 1
-        rightPanel.add(studentsPanel, "Students"); //2
-        rightPanel.add(AdminLogpanel,"admin");
-    
-        // Add Action Listeners for Buttons
-        
-        try {
-        this.createEnrollmentPanel();
-        this.createViewCoursePanel();	
-        this.createAddCoursePanel();
-        this.createAdminLogPanel();
-        this.createViewStudentEnrolledPanel();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-       
-
-        this.editButtons();
+        // aaron may  twoo add pa ah di ko magaawa yung backeand ng admin kaya nilagay ko muna dito yung admin yung lalabas sa dalawa (addcourse saka students)
+      
         // Add panels to the frame
         frame.add(leftPanel);
         frame.add(rightPanel);
         frame.setVisible(true);
-	}
-    
-	
-	public static void main(String[] args) {
-        
-    	SwingUtilities.invokeLater(new Gui()::CreateGUI);
-    	
-       
     }
 }

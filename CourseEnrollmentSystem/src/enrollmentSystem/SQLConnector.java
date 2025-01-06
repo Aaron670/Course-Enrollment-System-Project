@@ -58,6 +58,11 @@ public class SQLConnector {
 	
 	//Initializes the Tables needed if it does not currently exist; Students, Courses.
 	// Takes parameter Filepath. default filepath is: 'jdbc:sqlite:sample.db'
+	
+	public void close() throws SQLException {
+		this.cur.close();
+		this.conn.close();
+	}
 	public void overrideSQLConnector() {
 		
 		try(Connection connx = DriverManager.getConnection(this.FileName)){
@@ -132,7 +137,7 @@ public class SQLConnector {
 	
 	//ONLY FOR DEBUGGING METHODS FOLLOW/////
 	
-	public void addCourses() throws SQLException {
+	public void debaddCourses() throws SQLException {
 		
 		this.cur.execute("INSERT INTO Courses(CourseName,CourseDesc) VALUES('BS Computer Science','Description')");
 		this.cur.execute("INSERT INTO Courses(CourseName,CourseDesc) VALUES('BS Information Technology','Description')");
