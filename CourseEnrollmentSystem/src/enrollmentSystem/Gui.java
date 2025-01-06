@@ -2,12 +2,16 @@ package enrollmentSystem;
 
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import java.awt.event.ActionListener;
+import java.lang.reflect.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.awt.event.ActionEvent;
+import enrollmentSystem.getResult;
 
 public class Gui {
 	SQLConnector sql = new SQLConnector();
@@ -31,52 +35,10 @@ public class Gui {
     JPanel addCoursePanel = new JPanel();
     JPanel studentsPanel = new JPanel();
     
-    
-    
-    JTable table = new JTable(2,1);
-    //SET NYA UNG result Var
-    private void getString() throws SQLException {
-    	this.result =this.resultDataToArray();
+		
+    private void labelCreator(String[][] data, JPanel panel, int rows) {
+    	
     }
-	private String[][] resultDataToArray() throws SQLException {
-		
-		
-		String run = "SELECT Students.Student_ID, Students.ContactNumber, Students.Fname, Students.Lname, Students.EnrollmentDate, Courses.CourseName FROM Students JOIN Courses ON Students.CourseEnrolled = Courses.Course_ID";
-		ResultSet rs= this.sql.queryData(run);
-		
-		int rowCount=0;
-		while (rs.next()) { rowCount++; }
-		
-		rs= this.sql.queryData(run);
-		
-		String[][] data = new String[rowCount][100];
-		int x=0;
-		while(rs.next()) {
-			
-			data[x][0]=rs.getString("Student_ID");
-			data[x][1]=rs.getString("Fname");
-			data[x][2]=rs.getString("Lname");
-			data[x][3]=rs.getString("ContactNumber");
-			data[x][4]=rs.getString("EnrollmentDate");
-			data[x][5]=rs.getString("CourseName");
-			x++;
-		}
-		
-		return data;
-	
-	}
-	
-	//DI NAGANA
-	private void updatetable() throws Exception{
-		System.out.println();
-		studentsPanel.remove(table);
-		this.getString();
-		this.table= new JTable(this.result,this.columnNames);
-		studentsPanel.add(table);
-		
-		
-	}
-	
 	private void createEnrollmentPanel() {
 		
 		// Panel ng Enrollment
@@ -191,16 +153,44 @@ public class Gui {
             }
         });		
 	}
-	private void createViewCourse() {
+	private void createViewCourse() throws Exception {
 		// Panel for Viewing Courses
         
         coursesPanel.setBackground(Color.LIGHT_GRAY);
-        coursesPanel.setLayout(null);
+     
 
+        
+        
         JLabel coursesTitle = new JLabel("Available Courses");
-        coursesTitle.setBounds(100, 50, 250, 30);
+        coursesTitle.setBorder(new EmptyBorder(50,100,0,750));
         coursesTitle.setFont(new Font("Arial", Font.BOLD, 20));
         coursesPanel.add(coursesTitle);
+        
+        JPanel Courses = new JPanel();
+        Courses.setPreferredSize(new Dimension(800,200));
+        coursesPanel.add(Courses);
+        
+        //DITO UNG MGA COURSES
+        
+        String[][] course = getResult.getCourses();
+        
+        
+        JPanel courseBox = new JPanel(new BorderLayout());
+        courseBox.setBackground(Color.white);
+        courseBox.setPreferredSize(new Dimension(700,100));
+        
+        JLabel coursetitle = new JLabel("BSCS");
+        coursetitle.setFont(new Font("Arial", Font.BOLD, 20));
+        coursetitle.setBorder(new EmptyBorder(-50,20,0,0));
+        
+        JLabel coursedesc = new JLabel("BSCS");
+        coursedesc.setFont(new Font("Arial", Font.PLAIN, 15));
+        coursedesc.setBorder(new EmptyBorder(0,0,0,0));
+        
+        courseBox.add(coursetitle,BorderLayout.WEST);
+        courseBox.add(coursedesc);
+        Courses.add(courseBox);
+
 		
 	}
 	private void addCourse() {
@@ -214,6 +204,7 @@ public class Gui {
 		    addCourseTitle.setFont(new Font("Arial", Font.BOLD, 20));
 		    addCoursePanel.add(addCourseTitle);
 		    
+		    
 	}
 	private void viewStudent() throws SQLException {
 		// Panel for Viewing Students
@@ -225,30 +216,12 @@ public class Gui {
         studentsTitle.setFont(new Font("Arial", Font.BOLD, 20));
         studentsPanel.add(studentsTitle);
         
-        try {
-			this.result = this.resultDataToArray();
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+
         
         //ung mga data na kinukuha nung table
-        this.getString();
-        
-        table = new JTable(this.result, columnNames);
-        DefaultTableCellRenderer center = new DefaultTableCellRenderer();
-        center.setHorizontalAlignment(SwingConstants.CENTER);
-        
-      //  table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        table.setDefaultEditor(Object.class, null);
-        table.setDefaultRenderer(Object.class, center);
-        table.getTableHeader().setReorderingAllowed(false);
-        
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBounds(150, 150, 700, 300);
- 
-        studentsPanel.add(scrollPane);
-        
+        this.result =  getResult.getStudents();
+        System.out.println(Arrays.toString(this.result));
+      
 	}
 	
 	private void editButtons() {
@@ -276,13 +249,7 @@ public class Gui {
            
             cl.show(rightPanel, "Students");
            
-			try {
-				this.updatetable();
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-				
+		
 			
         });
 
@@ -356,6 +323,9 @@ public class Gui {
         this.addCourse();
         this.viewStudent();
 		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
