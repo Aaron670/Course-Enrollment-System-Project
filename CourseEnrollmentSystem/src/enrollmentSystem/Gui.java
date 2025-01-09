@@ -23,7 +23,6 @@ public class Gui {
 	JPanel leftPanel = new JPanel();
 	JLabel sub = new JLabel("Course Enrollment System");
 	JButton enrollButton = new JButton("Enrollment");
-	JButton viewCoursesButton = new JButton("View Available Courses");
 	JButton addCourseButton = new JButton("Add a Course");
 	JButton viewStudentsButton = new JButton("View Students Enrolled");
 	JPanel rightPanel = new JPanel();
@@ -31,32 +30,48 @@ public class Gui {
 	// Panel ng Enrollment
     JPanel enrollmentPanel = new JPanel();
     JLabel enrollTitle = new JLabel("Enrollment Form");
-   
-    
 	JLabel fnameLabel = new JLabel("First Name:");
      
+	//View Courses Panel
+	JButton viewCoursesButton = new JButton("View Available Courses");
+	JPanel courseCanvas = new JPanel(new BorderLayout());
+	
 	JPanel studentsPanel = new JPanel();
     JPanel coursesPanel = new JPanel();
     JPanel addCoursePanel = new JPanel();
     JLabel AddCourses = new JLabel("Add Course");
     JPanel AdminLogpanel = new JPanel();
     
+    JPanel refreshPanel= new JPanel();
     
+    private void refreshPanel(String panel) {
+    	CardLayout cl = (CardLayout) rightPanel.getLayout();
+        cl.show(rightPanel, "refreshPanel");
+        
+        if(panel=="Courses") {
+        	courseCanvas.removeAll();
+        	try {
+				this.showCourses();
+			} catch (Exception e) {}
+        }
+        cl.show(rightPanel, panel);
+        
+    }
     
 
 	private void createEnrollmentPanel() throws Exception {
 		
 		// Panel ng Enrollment
         
-		enrollTitle.setBounds(100, 50, 250, 30);
-        enrollTitle.setForeground(Color.WHITE);
+		enrollTitle.setBounds(380, 120, 250, 30);
+        enrollTitle.setForeground(Color.decode("#f5f5f5"));
         enrollTitle.setFont(new Font("Arial", Font.BOLD, 30));
         enrollmentPanel.add(enrollTitle);
         
     //  SaFirst Name
         JLabel fnameLabel = new JLabel("First Name:");
         fnameLabel.setBounds(250, 210, 130, 30);
-        fnameLabel.setForeground(Color.WHITE);
+        fnameLabel.setForeground(Color.decode("#f5f5f5"));
         fnameLabel.setFont(new Font("Arial", Font.BOLD, 23));
         enrollmentPanel.add(fnameLabel);
 
@@ -68,7 +83,7 @@ public class Gui {
         JLabel  lnameLabel = new JLabel("Last Name:");
         lnameLabel.setBounds(250,260, 130, 30);
         
-        lnameLabel.setForeground(Color.WHITE);
+        lnameLabel.setForeground(Color.decode("#f5f5f5"));
         lnameLabel.setFont(new Font("Arial", Font.BOLD, 23));
         enrollmentPanel.add(lnameLabel);
 
@@ -80,7 +95,7 @@ public class Gui {
         JLabel emailLabel = new JLabel("Email:");
         emailLabel.setBounds(250,310, 130, 30);
         emailLabel.setFont(new Font("Arial", Font.BOLD, 23));
-        emailLabel.setForeground(Color.WHITE);
+        emailLabel.setForeground(Color.decode("#f5f5f5"));
         enrollmentPanel.add(emailLabel);
         
         
@@ -93,7 +108,7 @@ public class Gui {
         JLabel contactLabel = new JLabel("Contact Number:");
         contactLabel.setBounds(200, 360, 200, 30);
         contactLabel.setFont(new Font("Arial", Font.BOLD, 23));
-        contactLabel.setForeground(Color.WHITE);
+        contactLabel.setForeground(Color.decode("#f5f5f5"));
         enrollmentPanel.add(contactLabel);
 
         JTextField contactField = new JTextField();
@@ -104,7 +119,7 @@ public class Gui {
         JLabel dateLabel = new JLabel("Enrollment Date:");
         dateLabel.setBounds(200,410,  300, 35);
         dateLabel.setFont(new Font("Arial", Font.BOLD, 23));
-        dateLabel.setForeground(Color.WHITE);
+        dateLabel.setForeground(Color.decode("#f5f5f5"));
         enrollmentPanel.add(dateLabel);
 
         String[] Month = {"Select Month", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
@@ -121,7 +136,7 @@ public class Gui {
                
       JComboBox EnrollDay  = new JComboBox(Days);
        
-      EnrollDay.setBounds(600, 410, 100, 30);
+      EnrollDay.setBounds(600, 410, 100, 35);
       	enrollmentPanel.add(EnrollDay);
       	
         enrollmentPanel.add(EnrollMonth);
@@ -136,7 +151,7 @@ public class Gui {
         JLabel courseLabel = new JLabel("Course Enrolled:");
         courseLabel.setFont(new Font("Arial", Font.BOLD, 23));
         courseLabel.setBounds(200, 480,  200, 30);
-        courseLabel.setForeground(Color.WHITE);
+        courseLabel.setForeground(Color.decode("#f5f5f5"));
         enrollmentPanel.add(courseLabel);
         
         String[][] courses = getResult.getCourses();
@@ -190,7 +205,6 @@ public class Gui {
                     "Course Enrolled: " + course, 
                     "Success", JOptionPane.INFORMATION_MESSAGE);
                 	String f= String.format("INSERT INTO Students(Fname,Lname,Email,ContactNumber,EnrollmentDate,CourseEnrolled) VALUES('%s','%s','%s','%s','%s',%s)",fname,lname,email,contact,enrollmentDate,course);
-                	System.out.println(f);
                 	this.sql.insertToTable(f);
                 
                 // Clear the fields after submission
@@ -202,54 +216,113 @@ public class Gui {
             }
         });
 	}
-	private void createViewCoursePanel() throws Exception {
-		// Panel for Viewing Courses
-        
-        coursesPanel.setBackground(Color.LIGHT_GRAY);
-        
-        JLabel coursesTitle = new JLabel("Available Courses");
-        coursesTitle.setBorder(new EmptyBorder(50,100,0,750));
-        coursesTitle.setFont(new Font("Arial", Font.BOLD, 20));
-        coursesPanel.add(coursesTitle);
-        
-        JPanel courseCanvas = new JPanel(new BorderLayout());
-        courseCanvas.setPreferredSize(new Dimension(900,650));
-        coursesPanel.add(courseCanvas);
-        
-        JPanel Courses = new JPanel();
+	
+	/*
+	 * --------------------------------------------------------------------------
+	 * 	Linipat ko yung naggagawa ng courses na mga box para pwede sya ma refresh
+	 * --------------------------------------------------------------------------
+	 */
+	private void showCourses() throws Exception{
+		courseCanvas.removeAll();
+		Dimension boxD = new Dimension(895,100);
+		
+		JPanel Courses = new JPanel(new FlowLayout());
         Courses.setBackground(Color.LIGHT_GRAY);
         Courses.setLayout(new BoxLayout(Courses, BoxLayout.Y_AXIS));
-        
+
         String[][] course = getResult.getCourses();
         
         //DITO UNG MGA COURSES
-        
+        if(course.length==0) {
+        	Courses.add(new JLabel("THERE ARE CURRENTLY NOT AVAILABLE COURSES"));
+        }
         int x=0;
         while(x!=course.length) {
         	System.out.println(course[0].length);
         	JPanel courseBox = new JPanel( new BorderLayout());
-        	courseBox.setPreferredSize(new Dimension(200,100));
+        	
+        	
+        	
+        	
+        	courseBox.setBackground(Color.decode("#63a163"));
+        	
+        	
+        	courseBox.setPreferredSize(boxD);
+        	courseBox.setMaximumSize(boxD);
             courseBox.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             
             JLabel coursetitle = new JLabel(course[x][1]);
-	        coursetitle.setFont(new Font("Arial", Font.BOLD, 20));
+	        coursetitle.setFont(new Font("Arial", Font.BOLD, 29));
 	        
-	        JLabel coursedesc = new JLabel(course[x][2]);
+	        JTextArea coursedesc = new JTextArea();
+	        coursedesc.setEditable(false);
+	        
 	        coursedesc.setFont(new Font("Arial", Font.PLAIN, 15));
             
+	        coursedesc.append(course[x][2]);
+	        coursedesc.setLineWrap(true);
+	        coursedesc.setWrapStyleWord(true);
+	        
             Courses.add(courseBox);
             Courses.add(Box.createRigidArea(new Dimension(0, 10)));
         
-	        
-	        
+            
+            /*
+             * This section is for deleting courses and students enrolled in it. baka tanggalin natin to pag kay master na pero kailangan para kay maam Angge
+             * */
+            JButton deleteCourseButton =  new JButton("X");	        
+            //GUMAGAWA NG SPECIAL NA ID PARA DON SA ISANG SPECIFIC NA BUTTON
+            deleteCourseButton.putClientProperty("ID", course[x][0]);
+            
+            
+            deleteCourseButton.addActionListener(e->{
+            	int a= JOptionPane.showConfirmDialog(frame,"This will remove all the students currently enrolled in the course are you sure? ");
+            	
+            	if(a==JOptionPane.YES_OPTION) {
+            		try {
+            			System.out.println("ITO AY e"+course[0][0]);
+						this.showCourses();
+						int id= (int) Integer.parseInt((String) deleteCourseButton.getClientProperty("ID"));
+						getResult.deleteCourse(id);
+						System.out.println("DELETED Course with ID: "+id);
+						
+						
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+            		this.refreshPanel("Courses");
+            	}
+            	
+            });
 	        courseBox.add(coursetitle,BorderLayout.WEST);
 	        courseBox.add(coursedesc,BorderLayout.AFTER_LAST_LINE);
+	        courseBox.add(deleteCourseButton,BorderLayout.EAST);
 	        Courses.add(courseBox);
 	        x++;
         }
         JScrollPane scrollPane = new JScrollPane(Courses);
-		
+        scrollPane.setBackground(Color.decode("#013d21"));
         courseCanvas.add(scrollPane,BorderLayout.CENTER);
+	}
+	
+	private void createViewCoursePanel() throws Exception {
+		// Panel for Viewing Courses
+        
+        coursesPanel.setBackground(Color.decode("#013d21"));
+        
+        JLabel coursesTitle = new JLabel("Available Courses");
+        
+        coursesTitle.setForeground(Color.decode("#f5f5f5"));
+        coursesTitle.setBorder(new EmptyBorder(50,100,0,750));
+        coursesTitle.setFont(new Font("Arial", Font.BOLD, 25));
+        coursesPanel.add(coursesTitle);
+        
+        
+        courseCanvas.setPreferredSize(new Dimension(900,650));
+        coursesPanel.add(courseCanvas);
+        
+        this.showCourses();
+     
         
         
 	}
@@ -261,8 +334,8 @@ public class Gui {
         
         
         
-        AddCourses.setBounds(500, 50, 250, 30);
-        AddCourses.setForeground(Color.WHITE);
+        AddCourses.setBounds(400, 120, 250, 30);
+        AddCourses.setForeground(Color.decode("#f5f5f5"));
         AddCourses.setFont(new Font("Arial", Font.BOLD, 30));
         addCoursePanel.add(AddCourses);
        
@@ -292,56 +365,84 @@ public class Gui {
         
         
         //Login button 
-        JButton CourseSubmit = new JButton("Login");
+        JButton CourseSubmit = new JButton("Submit");
         CourseSubmit.setBounds(350	, 570, 200, 60);
         CourseSubmit.setFont(new Font("Arial", Font.BOLD, 21));
         CourseSubmit.setFocusable(false);
         CourseSubmit.setForeground(Color.WHITE);
         CourseSubmit.setBackground(Color.decode("#d1aa40"));
+        
+        CourseSubmit.addActionListener(e->{
+        	String getName= CourseField.getText().trim();
+        	String getDesc= DescripdField.getText().trim();
+        	
+        	if(getName.equals("/removeall")) {
+        		CourseField.setText("");
+        		this.sql.insertToTable("DELETE FROM Courses");
+        	}
+        	if(getName.equals("/debugadd")) {
+        		CourseField.setText("");
+        		
+        		try {
+					this.sql.debaddCourses();
+					
+				} catch (SQLException e1) {System.err.println(e1);}
+        		
+        	}
+        	if(!getName.isEmpty()&&!getDesc.isEmpty()) {
+        		String run = String.format("INSERT INTO Courses(CourseName,CourseDesc) VALUES('%s','%s')", getName,getDesc);
+        			this.sql.insertToTable(run);
+        			CourseField.setText("");
+        			DescripdField.setText("");
+        	}
+        	else {
+        		System.out.println("Field is empty");
+        	}
+        });
         addCoursePanel.add(CourseSubmit);
 		    
 	}
 	private void createAdminLogPanel() throws SQLException {
 		// Panel for Viewing Students
 		
-        AdminLogpanel.setBackground(Color.decode("#013d21"));
+        AdminLogpanel.setBackground(Color.decode("#63a163"));
         AdminLogpanel.setLayout(null);
        
         
         JLabel adminTitle = new JLabel("AdminHQ");
-        adminTitle.setBounds(500, 50, 250, 30);
-        adminTitle.setForeground(Color.WHITE);
-        adminTitle.setFont(new Font("Arial", Font.BOLD, 30));
+        adminTitle.setBounds(400, 170, 250, 30);
+        adminTitle.setForeground(Color.decode("#f5f5f5"));
+        adminTitle.setFont(new Font("Arial", Font.BOLD, 38));
         AdminLogpanel.add(adminTitle);
        
         
         //  username
         JLabel UserName = new JLabel("Username:");
-        UserName.setBounds(250, 210, 130, 30);
-        UserName.setForeground(Color.WHITE);
-        UserName.setFont(new Font("Arial", Font.BOLD, 23));
+        UserName.setBounds(200, 290, 200, 30);
+        UserName.setForeground(Color.decode("#f5f5f5"));
+        UserName.setFont(new Font("Arial", Font.BOLD, 28));
         AdminLogpanel.add(UserName);
 
         JTextField UserField = new JTextField();
-        UserField.setBounds(450, 210, 300, 35);
+        UserField.setBounds(450, 290, 400, 40);
         AdminLogpanel.add( UserField);
-
+ 
         // password
         JLabel  Password = new JLabel("Password:");
-        Password.setBounds(250,260, 130, 30);
+        Password.setBounds(200,370, 200, 30);
         
-        Password.setForeground(Color.WHITE);
-        Password.setFont(new Font("Arial", Font.BOLD, 23));
+        Password.setForeground(Color.decode("#f5f5f5"));
+        Password.setFont(new Font("Arial", Font.BOLD, 28));
         AdminLogpanel.add(Password);
         
         JTextField PasswordField = new JTextField();
-        PasswordField.setBounds(450,260, 300, 35);
+        PasswordField.setBounds(450,370,400, 40);
         AdminLogpanel.add(PasswordField);
         
         
         //Login button 
         JButton LoginButtons = new JButton("Login");
-        LoginButtons.setBounds(350	, 570, 200, 60);
+        LoginButtons.setBounds(540	, 440, 200, 60);
         LoginButtons.setFont(new Font("Arial", Font.BOLD, 21));
         LoginButtons.setFocusable(false);
         LoginButtons.setForeground(Color.WHITE);
@@ -355,9 +456,10 @@ public class Gui {
         });
         
 	}
-   private void createViewStudentEnrolledPanel() {
+   private void createViewStudentEnrolledPanel() throws Exception{
 	   
-  
+	   String[][]studentData = getResult.getStudents();
+	   
         
 
         //DITO UNG VIEW STUDEnts
@@ -373,6 +475,9 @@ public class Gui {
         viewCoursesButton.addActionListener(e -> {
             CardLayout cl = (CardLayout) rightPanel.getLayout();
             cl.show(rightPanel, "Courses");
+            try {
+				this.showCourses();
+			} catch (Exception e1) {}
         });
 
         addCourseButton.addActionListener(e -> {
@@ -445,11 +550,14 @@ public class Gui {
         rightPanel.setLayout(new CardLayout()); // Set CardLayout for dynamic switching
 
      // Add all panels to the rightPanel (CardLayout)
+        
         rightPanel.add(enrollmentPanel, "Enrollment");
         rightPanel.add(coursesPanel, "Courses");
         rightPanel.add(addCoursePanel, "AddCourse"); //eto yung dalwa ahh 1
         rightPanel.add(studentsPanel, "Students"); //2
         rightPanel.add(AdminLogpanel,"admin");
+        
+        rightPanel.add(refreshPanel,"refreshPanel");
     
         // Add Action Listeners for Buttons
         

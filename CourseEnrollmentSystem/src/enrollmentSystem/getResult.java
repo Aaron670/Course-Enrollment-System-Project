@@ -57,16 +57,20 @@ public class getResult {
 			data[x][2]=rs.getString("CourseDesc");
 			x++;
 		}
-		
+		sql.close();
 		return data;
-	
 	}
 	
-	
-	public static void main(String[] args) throws SQLException {
+	public static void deleteCourse(int courseID) throws Exception{
 		
-		String[][] r = getCourses();
-			
-		System.out.println(r[3][1]);
+		SQLConnector sql = new SQLConnector();
+		String run = String.format("DELETE FROM Students WHERE CourseEnrolled=%d", courseID);
+		sql.insertToTable(run);
+		
+		run = String.format("DELETE FROM Courses WHERE Course_ID=%d", courseID);
+		sql.insertToTable(run);
+		
+		sql.close();
 	}
+	
 }

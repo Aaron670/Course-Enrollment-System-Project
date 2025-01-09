@@ -62,6 +62,7 @@ public class SQLConnector {
 	public void close() throws SQLException {
 		this.cur.close();
 		this.conn.close();
+		System.out.println("Database Successfully Closed.");
 	}
 	public void overrideSQLConnector() {
 		
@@ -70,8 +71,8 @@ public class SQLConnector {
 				
 				this.conn=connx;
 				this.cur=this.conn.createStatement();
-			
 				
+				//this.debaddCourses();
 				
 				//Courses
 				
@@ -93,7 +94,7 @@ public class SQLConnector {
 										+"FOREIGN KEY(CourseEnrolled) REFERENCES Courses(Course_ID));";
 						this.cur.execute(createTable);
 
-
+						System.out.println("Database Opened.");
 				}
 			}
 		catch (SQLException e) {
@@ -139,9 +140,17 @@ public class SQLConnector {
 	
 	public void debaddCourses() throws SQLException {
 		
-		this.cur.execute("INSERT INTO Courses(CourseName,CourseDesc) VALUES('BS Computer Science','Description')");
-		this.cur.execute("INSERT INTO Courses(CourseName,CourseDesc) VALUES('BS Information Technology','Description')");
-		this.cur.execute("INSERT INTO Courses(CourseName,CourseDesc) VALUES('BA Medical Technology','Description')");
-		this.cur.execute("INSERT INTO Courses(CourseName,CourseDesc) VALUES('BS International Studies','Description')");	
+		String r ="INSERT INTO Courses(CourseName,CourseDesc) VALUES('BS Computer Science','The Bachelor of Science in Computer Science (BSCS) is a four-year degree course, which focuses on the study of concepts and theories, algorithmic foundations, implementation and application of information and computing solutions.')";
+		this.insertToTable(r);
+		r= ("INSERT INTO Courses(CourseName,CourseDesc) VALUES('BS Information Technology','The Bachelor of Science in Information Technology (BSIT) program is a four-year degree program which focuses on the study of computer utilization and computer software to plan, install, customize, operate, manage, administer and maintain information technology infrastructure.')");
+		this.insertToTable(r);
+		r= ("INSERT INTO Courses(CourseName,CourseDesc) VALUES('BA Medical Technology','The BSMT program covers a wide range of topics in laboratory medicine, including anatomy, physiology, biochemistry, microbiology, hematology, immunology, and parasitology. Students also learn how to operate laboratory equipment, perform clinical tests, and interpret results.')");
+		this.insertToTable(r);
+		r=("INSERT INTO Courses(CourseName,CourseDesc) VALUES('BS International Studies','Short Description Here')");
+		this.insertToTable(r);
+
+		
+		//r="DELETE FROM Courses";
+		//this.insertToTable(r);
 	}
 }
