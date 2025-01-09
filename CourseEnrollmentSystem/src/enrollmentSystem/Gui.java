@@ -36,13 +36,16 @@ public class Gui {
 	JButton viewCoursesButton = new JButton("View Available Courses");
 	JPanel courseCanvas = new JPanel(new BorderLayout());
 	
+	//Students enrolled
 	JPanel studentsPanel = new JPanel();
-    JPanel coursesPanel = new JPanel();
+	JPanel studentCanvas = new JPanel(new BorderLayout());
+	JPanel coursesPanel = new JPanel();
     JPanel addCoursePanel = new JPanel();
     JLabel AddCourses = new JLabel("Add Course");
     JPanel AdminLogpanel = new JPanel();
     
     JPanel refreshPanel= new JPanel();
+    
     
     private void refreshPanel(String panel) {
     	CardLayout cl = (CardLayout) rightPanel.getLayout();
@@ -58,9 +61,10 @@ public class Gui {
         
     }
     
-
+ 
 	private void createEnrollmentPanel() throws Exception {
 		
+		enrollmentPanel.removeAll();
 		// Panel ng Enrollment
         
 		enrollTitle.setBounds(380, 120, 250, 30);
@@ -259,7 +263,7 @@ public class Gui {
 	        
 	        coursedesc.setFont(new Font("Arial", Font.PLAIN, 15));
             
-	        coursedesc.append(course[x][2]);
+	        coursedesc.append(course[x][2]+"\n");
 	        coursedesc.setLineWrap(true);
 	        coursedesc.setWrapStyleWord(true);
 	        
@@ -456,11 +460,66 @@ public class Gui {
         });
         
 	}
-   private void createViewStudentEnrolledPanel() throws Exception{
+	
+	
+	private void showStudents() throws Exception {
+		String[][] studentData = getResult.getStudents();
+		
+		JPanel tableStudent = new JPanel(new FlowLayout());
+		studentCanvas.add(tableStudent);
+		tableStudent.setBackground(Color.gray);
+		
+		// COLUMN ITO
+		for(String i:this.columnNames) {
+			System.out.println(i);
+			
+
+			JLabel label = new JLabel(i);
+			label.setFont(new Font("Arial", Font.BOLD, 15));
+			
+			JLabel emp= new JLabel("|");
+			emp.setFont(new Font("Arial", Font.BOLD, 15));
+			
+			tableStudent.add(label);
+			tableStudent.add(emp);
+		}
+		int studentLength= studentData.length;
+		for(int i=0;i<studentLength;i++) {
+			System.out.println("Test: "+studentData[i][0]);
+			JLabel x = new JLabel(studentData[i][0]);
+			x.setFont(new Font("Arial", Font.BOLD, 15));
+			tableStudent.add(x,BorderLayout.WEST);
+			
+			
+			for(int j=0; i<studentData[i].length;j++) {
+					
+					
+				
+					x= new JLabel(studentData[i][j]);
+					tableStudent.add(x);
+			}
+		}
+		
+		JPanel students = new JPanel();
+
+	}
+	private void createViewStudentEnrolledPanel() throws Exception{
 	   
-	   String[][]studentData = getResult.getStudents();
-	   
+		studentsPanel.setBackground(Color.decode("#013d21"));
         
+        JLabel student = new JLabel("Enrolled Students");
+        
+        student.setForeground(Color.decode("#f5f5f5"));
+        student.setBorder(new EmptyBorder(50,100,0,750));
+        student.setFont(new Font("Arial", Font.BOLD, 25));
+        studentsPanel.add(student);
+        
+        
+        studentCanvas.setPreferredSize(new Dimension(900,650));
+        studentsPanel.add(studentCanvas);
+        
+        this.showStudents();
+	   
 
         //DITO UNG VIEW STUDEnts
 	}
@@ -469,6 +528,9 @@ public class Gui {
 		// Add Action Listeners for Buttons
 		enrollButton.addActionListener(e -> {
             CardLayout cl = (CardLayout) rightPanel.getLayout();
+            try {
+				this.createEnrollmentPanel();
+			} catch (Exception e1){}
             cl.show(rightPanel, "Enrollment");
         });
 
@@ -487,13 +549,14 @@ public class Gui {
 
         viewStudentsButton.addActionListener(e -> {
             CardLayout cl = (CardLayout) rightPanel.getLayout();
-            cl.show(rightPanel, "admin");
+            cl.show(rightPanel, "Students");
         });
 
 	}
 	
 	public void CreateGUI()	{
-		
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 		this.frame.setTitle("Enrollment Management");
         this.frame.setSize(1250, 800);
         this.frame.setLayout(null);
