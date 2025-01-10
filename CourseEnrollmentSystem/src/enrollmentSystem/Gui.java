@@ -60,6 +60,13 @@ public class Gui {
 				this.showCourses();
 			} catch (Exception e) {}
         }
+        
+        if(panel=="Students") {
+        	studentCanvas.removeAll();
+        	try {
+				this.showStudents();
+			} catch (Exception e) {}
+        }
         cl.show(rightPanel, panel);
         
     }
@@ -164,9 +171,11 @@ public class Gui {
         String[][] courses = getResult.getCourses();
         
         String[] Course = new String[courses.length];
-        
+        int[] courseID = new int[courses.length];
         for(int i=0; i<courses.length;i++) {
         	Course[i]=courses[i][1];
+        	courseID[i]=Integer.parseInt(courses[i][0]);
+        	System.out.println(courseID[i]);
         }
         
         JComboBox CourseChoice = new JComboBox(Course);
@@ -197,9 +206,19 @@ public class Gui {
             String lname = lnameField.getText();
             String email = emailField.getText();
             String contact = contactField.getText();
-            String enrollmentDate = dateField.getText();
-            String course = courseField.getText();
-
+            String enrollmentDateMonth = String.valueOf(EnrollMonth.getSelectedItem());
+            String enrollmentDateDay = String.valueOf(EnrollDay.getSelectedItem());
+            String enrollmentDate = enrollmentDateDay+"-"+enrollmentDateMonth+"-2025";
+            String course = String.valueOf(CourseChoice.getSelectedItem());
+            int gotcourseID=0;
+            for(int i=0;i<Course.length;i++) {
+            	if(Course[i].equals(course)) {
+            		gotcourseID = (courseID[i]);
+            		System.out.println("eyy");
+            	}
+            }
+            System.out.println("courseses : "+course);
+            
             if (fname.isEmpty() || lname.isEmpty() || email.isEmpty() || contact.isEmpty() || course.isEmpty()) {
                 JOptionPane.showMessageDialog(enrollmentPanel, "All fields are required!", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
@@ -211,7 +230,7 @@ public class Gui {
                     "Enrollment Date: " + enrollmentDate + "\n" +
                     "Course Enrolled: " + course, 
                     "Success", JOptionPane.INFORMATION_MESSAGE);
-                	String f= String.format("INSERT INTO Students(Fname,Lname,Email,ContactNumber,EnrollmentDate,CourseEnrolled) VALUES('%s','%s','%s','%s','%s',%s)",fname,lname,email,contact,enrollmentDate,course);
+                	String f= String.format("INSERT INTO Students(Fname,Lname,Email,ContactNumber,EnrollmentDate,CourseEnrolled) VALUES('%s','%s','%s','%s','%s',%s)",fname,lname,email,contact,enrollmentDate,gotcourseID);
                 	this.sql.insertToTable(f);
                 
                 // Clear the fields after submission
@@ -394,7 +413,11 @@ public class Gui {
 					this.sql.debaddCourses();
 					
 				} catch (SQLException e1) {System.err.println(e1);}
-        		
+        	}
+        	if(getName.equals("/debugstudent")) {
+        		try {
+					getResult.addPeople();
+				} catch (Exception e1) {}
         	}
         	if(!getName.isEmpty()&&!getDesc.isEmpty()) {
         		String run = String.format("INSERT INTO Courses(CourseName,CourseDesc) VALUES('%s','%s')", getName,getDesc);
@@ -466,6 +489,7 @@ public class Gui {
 	
 	
 	private void showStudents() throws Exception {
+		studentCanvas.removeAll();
 		String[][] data = getResult.getStudents();
 		
 		JPanel tableStudent = new JPanel(new GridBagLayout());
@@ -589,6 +613,7 @@ public class Gui {
         viewStudentsButton.addActionListener(e -> {
             CardLayout cl = (CardLayout) rightPanel.getLayout();
             cl.show(rightPanel, "Students");
+            this.refreshPanel("Students");
         });
 
 	}
